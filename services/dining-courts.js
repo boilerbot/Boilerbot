@@ -5,7 +5,7 @@ const urls = require('../urls');
 const fb = require('./facebook-service');
 
 module.exports = {
-	//define all dining courts functionality here
+	//define all crime stats functionality here
 
 	diningcourts_location : function(sender) {
 
