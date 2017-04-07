@@ -1,29 +1,96 @@
 {
-  "name": "buddy",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "_args": [
+    [
+      {
+        "raw": "diff@1.4.0",
+        "scope": null,
+        "escapedName": "diff",
+        "name": "diff",
+        "rawSpec": "1.4.0",
+        "spec": "1.4.0",
+        "type": "version"
+      },
+      "/Users/Eehita/Desktop/buddy/node_modules/mocha"
+    ]
+  ],
+  "_from": "diff@1.4.0",
+  "_id": "diff@1.4.0",
+  "_inCache": true,
+  "_location": "/diff",
+  "_npmUser": {
+    "name": "kpdecker",
+    "email": "kpdecker@gmail.com"
   },
+  "_npmVersion": "1.4.28",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "diff@1.4.0",
+    "scope": null,
+    "escapedName": "diff",
+    "name": "diff",
+    "rawSpec": "1.4.0",
+    "spec": "1.4.0",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "/mocha"
+  ],
+  "_resolved": "https://registry.npmjs.org/diff/-/diff-1.4.0.tgz",
+  "_shasum": "7f28d2eb9ee7b15a97efd89ce63dcfdaa3ccbabf",
+  "_shrinkwrap": null,
+  "_spec": "diff@1.4.0",
+  "_where": "/Users/Eehita/Desktop/buddy/node_modules/mocha",
+  "bugs": {
+    "url": "http://github.com/kpdecker/jsdiff/issues",
+    "email": "kpdecker@gmail.com"
+  },
+  "dependencies": {},
+  "description": "A javascript text diff implementation.",
+  "devDependencies": {
+    "colors": "^1.1.0",
+    "istanbul": "^0.3.2",
+    "mocha": "^2.2.4",
+    "should": "^6.0.1"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "7f28d2eb9ee7b15a97efd89ce63dcfdaa3ccbabf",
+    "tarball": "https://registry.npmjs.org/diff/-/diff-1.4.0.tgz"
+  },
+  "engines": {
+    "node": ">=0.3.1"
+  },
+  "files": [
+    "diff.js"
+  ],
+  "gitHead": "27a750e9116e6ade6303bc24a9be72f6845e00ed",
+  "homepage": "https://github.com/kpdecker/jsdiff",
+  "keywords": [
+    "diff",
+    "javascript"
+  ],
+  "licenses": [
+    {
+      "type": "BSD",
+      "url": "http://github.com/kpdecker/jsdiff/blob/master/LICENSE"
+    }
+  ],
+  "main": "./diff",
+  "maintainers": [
+    {
+      "name": "kpdecker",
+      "email": "kpdecker@gmail.com"
+    }
+  ],
+  "name": "diff",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/boilerbot/buddy.git"
+    "url": "git://github.com/kpdecker/jsdiff.git"
   },
-  "author": "CS307",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/boilerbot/buddy/issues"
+  "scripts": {
+    "test": "istanbul cover node_modules/.bin/_mocha test/*.js && istanbul check-coverage --statements 100 --functions 100 --branches 100 --lines 100 coverage/coverage.json"
   },
-  "homepage": "https://github.com/boilerbot/buddy#readme",
-  "dependencies": {
-    "chai": "^3.5.0",
-    "cheerio": "^0.22.0",
-    "express": "^4.15.2",
-    "fs": "0.0.1-security",
-    "mocha": "^3.2.0",
-    "request": "^2.81.0",
-    "supertest": "^3.0.0",
-    "url": "^0.11.0"
-  }
+  "version": "1.4.0"
 }
