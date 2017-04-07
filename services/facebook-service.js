@@ -54,6 +54,49 @@ module.exports = {
 		return response;
 	},
 
+	createList : function(fbID, messageData) {
+		var response = {
+			recipient : {
+				id : fbID
+			},
+			message : {
+				attachment : {
+					type : "template",
+					payload : {
+						template_type : "list",
+						top_element_style: "compact",
+						elements : messageData
+					},
+				}
+			}
+		};
+		console.log("\n\n\n MESSAGE: " + JSON.stringify(response));
+		return response;
+	},
+
+	createOptions : function() {
+		var message = {
+	    	text: "options:",
+	      	quick_replies: [
+		    	{
+		          content_type:"text",
+		          title:"crime",
+		          payload:"crime",
+		        },
+		        {
+		          content_type:"text",
+		          title:"dining courts",
+		          payload:"dining courts",
+		        },
+		        {
+		          content_type:"text",
+		          title:"feedback",
+		          payload:"feedback",
+		        }]
+		    };
+		return message;
+	},
+
 	createQuickReply :  function(fbID, data) {
 		console.log("The facebook id is " + fbID);
 		var messageData = {
@@ -68,6 +111,15 @@ module.exports = {
 	sendMessageToNewUser : function(senderID) {
 		var message = module.exports.createTextMessage(senderID, "Hi, I am BoilerBot! I provide information about all-things-Purdue. How may I help you today?");
 		module.exports.sendMessageToFacebook(message);
+		var answer = module.exports.createOptions();
+		var text = module.exports.createQuickReply(senderID, answer);
+		module.exports.sendMessageToFacebook(text);
+	},
+
+	modularFunction : function(senderID) {
+		var answer = module.exports.createOptions();
+		var text = module.exports.createQuickReply(senderID, answer);
+		module.exports.sendMessageToFacebook(text);
 	},
 
 	sendMessageToFacebook : function(message) {
