@@ -6,15 +6,21 @@ const app = express();
 const recast = require('recastai');
 const config = require('./config');
 const urls = require('./urls');
+var fs = require('fs');
+var cheerio = require('cheerio');
+var url = require('url');
 
 var mongoose = require("mongoose");
 
 //var db = mongoose.connect("mongodb://heroku_b4mqcjqm:7m1nqnr1d4vvsshk0smsbggi0u@ds161209.mlab.com:61209/heroku_b4mqcjqm");
+var db = mongoose.connect("mongodb://heroku_thtvggsn:h0fk0mt0je0ac1go70i5odf7ko@ds147900.mlab.com:47900/heroku_thtvggsn");
 var User = require("./users");
 
 /*services section*/
+
 const fb = require('./services/facebook-service');
 const courts = require('./services/dining-courts');
+const crime = require('./services/crime-stats');
 /*Recast client*/
 const client = new recast.Client(config.recast_token, 'en');
 /*intents section*/
@@ -39,18 +45,17 @@ app.use(bodyParser.json());
 
 // Server frontpage
 app.get('/', function (req, res) {  
-    res.send('This is TestBot Server');
+    res.send('This is BoilerBot Server');
 });
 
 // Facebook Webhook
 app.get('/webhook', function (req, res) {  
-    if (req.query['hub.verify_token'] === 'boilerbot') {
+    if (req.query['hub.verify_token'] === 'buddy') {
         res.send(req.query['hub.challenge']);
     } else {
         res.send('Invalid verify token');
     }
 });
-
 
 /*POST METHOD TO GET MESSAGE FROM FACEBOOK*/
 app.post('/webhook/', function(req, res) {
@@ -108,6 +113,7 @@ app.post('/webhook/', function(req, res) {
 
 function receivedMessage(event) {
 	var senderID = event.sender.id;
+	console.log("\n\n\nSENDER ID IS:"+senderID);
 	var recipientID = event.recipient.id;
 	var timeOfMessage = event.timestamp;
 	var message = event.message;
@@ -126,11 +132,65 @@ function receivedMessage(event) {
 		var payload = quickReplyPayload.split(" ");
 
 		console.log("Quick reply with payload %s", quickReplyPayload);
-		console.log("Response status -> " + fb.sendMessageToFacebook(message));
+		if (quickReplyPayload === "crime") {
+			var message = fb.createTextMessage(senderID, "Daily crime, Monthly crime, Yearly crime, Active Warrants. Access https://www.facebook.com/pg/Boilerbot17/about/?ref=page_internal for detailed instructions!");
+			fb.sendMessageToFacebook(message);
+		}
+		if (quickReplyPayload === "dining courts") {
+			var message = fb.createTextMessage(senderID, "Location of dining courts, tbd. Access https://www.facebook.com/pg/Boilerbot17/about/?ref=page_internal for detailed instructions!");
+			fb.sendMessageToFacebook(message);
+		}
+		if (quickReplyPayload === "feedback") {
+			var message = fb.createTextMessage(senderID, "Submit feedback for our bot. Access https://www.facebook.com/pg/Boilerbot17/about/?ref=page_internal for detailed instructions!");
+			fb.sendMessageToFacebook(message);
+		}
+		//console.log("Response status -> " + fb.sendMessageToFacebook(message));
 		return;
 	}
+	if (messageText) {
+		//sends a server downtime message to all users
+		if (messageText.includes('Server-downtime')) {
+			var adminID = ["1394141623986235"]; //add all admins sender ID "501253886664954: REPLACE", 
+			if (adminID.indexOf(senderID) > -1) {
+			var arrTime = messageText.split(" ");
+
+			var cursor = User.find({}, function(err, users) {
+				console.log("Users" + users);
+				users.forEach(function(user) {
+					var message = fb.createTextMessage(user.user_id, "The server is going to be down from " + arrTime[1] + " to "
+					+ arrTime[2] + ".\nSorry for the inconvenience.");
+					console.log("Response status -> " + fb.sendMessageToFacebook(message));
+    			});
+  			});
+  			} else {
+				var message = fb.createTextMessage(senderID, "Dont act too cool. You're not a developer!");
+				console.log("Response status -> " + fb.sendMessageToFacebook(message));
+			}
+			console.log("cursor" + cursor);
+		} else {
+			sendToRecast(senderID, messageText);
+		}
+	}
+
 	else if (messageText) {
 		sendToRecast(senderID, messageText);
+	}
+	else if (messageAttachments) {
+		console.log("\n\n\n\n REACHED HERE");
+		messageAttachments.forEach(function(attachment) {
+			if (user.request_type === "crime") {
+				var message = module.exports.createTextMessage(senderID, "crime");
+				module.exports.sendMessageToFacebook(message);
+			}
+			if (user.request_type === "dining courts") {
+				var message = module.exports.createTextMessage(senderID, "dining courts");
+				module.exports.sendMessageToFacebook(message);
+			}
+			if (user.request_type === "trial") {
+				var message = module.exports.createTextMessage(senderID, "trial");
+				module.exports.sendMessageToFacebook(message);
+			}
+		});
 	}
 }
 
@@ -182,6 +242,7 @@ function sendToRecast(sender, message) {
 				case 'help':
 					console.log("Intent: help");
 					message = fb.createTextMessage(sender, help.getHelp(user_details.first_name));
+					//message = fb.createQuickReply(sender, help.getHelp(user_details.first_name));
 					console.log("Response status -> " + fb.sendMessageToFacebook(message));
 					break;
 
@@ -206,6 +267,75 @@ function sendToRecast(sender, message) {
 						console.log("error handling");
 					}
 					break;
+
+				case 'monthly_crime':
+					console.log("\n monthly crime intent found:");
+					if (res.entities != null) {
+						 	crime.getMonthlyStats(sender).then(function(elements) {
+						 	console.log("Promise was resolved and we got elements");
+						 	message = fb.createCards(sender, elements);
+						 	console.log("Response status -> " + fb.sendMessageToFacebook(message));
+						 }).catch(function(error) {
+						 	console.log("Got an error in monthly crime and got error");
+						});
+						console.log("Response status -> " + fb.sendMessageToFacebook(message));
+					}
+					else {
+						console.log("error handling");
+					}
+					break;
+
+				case 'daily_crime':
+					console.log("\n daily crime intent found:");
+					if (res.entities != null) {
+						 	crime.getDailyStats(sender).then(function(elements) {
+						 	console.log("Promise was resolved and we got elements");
+						 	message = fb.createCards(sender, elements);
+						 	console.log("Response status -> " + fb.sendMessageToFacebook(message));
+						 }).catch(function(error) {
+						 	console.log("Got an error in monthly crime and got error");
+						});
+						console.log("Response status -> " + fb.sendMessageToFacebook(message));
+					}
+					else {
+						console.log("error handling");
+					}
+					break;
+
+				case 'yearly_crime':
+					console.log("\n yearly crime intent found:");
+					if (res.entities != null) {
+						 	crime.getYearlyStats(sender).then(function(elements) {
+						 	console.log("Promise was resolved and we got elements");
+						 	message = fb.createList(sender, elements);
+						 	console.log("Response status -> " + fb.sendMessageToFacebook(message));
+						 }).catch(function(error) {
+						 	console.log("Got an error in monthly crime and got error");
+						});
+						console.log("Response status -> " + fb.sendMessageToFacebook(message));
+					}
+					else {
+						console.log("error handling");
+					}
+					break;
+
+				case 'active_warrants':
+					console.log("\n active warrants intent found:");
+					if (res.entities != null) {
+						 	crime.getWarrants(sender).then(function(elements) {
+						 	console.log("Promise was resolved and we got elements");
+						 	message = fb.createCards(sender, elements);
+						 	console.log("Response status -> " + fb.sendMessageToFacebook(message));
+						 }).catch(function(error) {
+						 	console.log("Got an error in active warrants and got error");
+						});
+						console.log("Response status -> " + fb.sendMessageToFacebook(message));
+					}
+					else {
+						console.log("error handling");
+					}
+					break;
+
 
 				default:
 					message = fb.createTextMessage(sender, "Didn't really get that " + user_details['first_name'] + ". Could you try something else?");
