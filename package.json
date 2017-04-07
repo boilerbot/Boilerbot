@@ -1,27 +1,29 @@
 {
-  "name": "boilerbot",
+  "name": "buddy",
   "version": "1.0.0",
-  "description": "boiler chatbot",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/boilerbot/Boilerbot.git"
+    "url": "git+https://github.com/boilerbot/buddy.git"
   },
-  "author": "CS 307 Team 1",
+  "author": "CS307",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/boilerbot/Boilerbot/issues"
+    "url": "https://github.com/boilerbot/buddy/issues"
   },
-  "homepage": "https://github.com/boilerbot/Boilerbot#readme",
+  "homepage": "https://github.com/boilerbot/buddy#readme",
   "dependencies": {
-    "body-parser": "^1.17.0",
-    "express": "^4.15.0",
-    "mongoose": "^4.8.5",
-    "recastai": "^2.3.0",
-    "request": "^2.79.0",
-    "request-promise": "^4.1.1"
+    "chai": "^3.5.0",
+    "cheerio": "^0.22.0",
+    "express": "^4.15.2",
+    "fs": "0.0.1-security",
+    "mocha": "^3.2.0",
+    "request": "^2.81.0",
+    "supertest": "^3.0.0",
+    "url": "^0.11.0"
   }
 }
